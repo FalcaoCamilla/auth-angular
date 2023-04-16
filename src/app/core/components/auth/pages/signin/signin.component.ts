@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-signin',
@@ -12,14 +13,27 @@ export class SigninComponent implements OnInit {
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]]
   })
-  constructor(private formBuilder: FormBuilder) { }
+  public msgError!: string;
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private authService: AuthService
+  ) { }
 
   ngOnInit(): void {
   }
 
   submitForm(){
     if(this.formAuth.valid){
-      console.log(this.formAuth)
+      this.authService.signin(
+        {
+          email: this.formAuth.value.email,
+          password: this.formAuth.value.password
+        }
+      ).subscribe({
+        next: (res) => res,
+        error: (err) => this.msgError = err
+      })
     }
   }
 
